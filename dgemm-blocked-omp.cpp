@@ -85,6 +85,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    for (int a = 0; a < n; a += block_size) {
       for (int b = 0; b < n; b += block_size) {
          for (int c = 0; c < n; c += block_size) { 
+            LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
             #pragma parallel for
             for (int i = a; i < a + block_size; i++) {
                for (int j = b; j < b + block_size; j++) {
@@ -93,6 +94,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
                   }
                }
             }
+            LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
          }
       }
    }
