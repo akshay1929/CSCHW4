@@ -29,7 +29,6 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    // i = y
    // j = z
    // k = x
-   int blocks = n/block_size;
    for (int x = 0; x < blocks; x++) {
       for (int y = 0; y < blocks; y++) {
          //Copy to cLoc
