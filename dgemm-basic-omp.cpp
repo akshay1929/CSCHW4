@@ -17,7 +17,7 @@ void square_dgemm(int n, double* A, double* B, double* C)
    // be sure to include LIKWID_MARKER_START(MY_MARKER_REGION_NAME) inside the block of parallel code,
    // but before your matrix multiply code, and then include LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME)
    // after the matrix multiply code but before the end of the parallel code block.
-   #pragma omp parallel {
+   #pragma omp parallel for {
       LIKWID_MARKER_START(MY_MARKER_REGION_NAME)
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
