@@ -65,9 +65,9 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
                }
             }
             //Multiplication
-            for (int i = 0; i < n; i++) {
-               for (int j = 0; j < n; j++) {
-                  for (int k = 0; k < n; k++) {
+            for (int i = 0; i < block_size; i++) {
+               for (int j = 0; j < block_size; j++) {
+                  for (int k = 0; k < block_size; k++) {
                      cLoc[i * block_size + k] += aLoc[j * block_size + k] * bLoc[i * block_size + j];
                   }
                }
@@ -82,20 +82,4 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
          }
       }
    }
-   // for (int a = 0; a < n; a += block_size) {
-   //    for (int b = 0; b < n; b += block_size) {
-   //       for (int c = 0; c < n; c += block_size) { 
-   //          LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
-   //          #pragma parallel for
-   //          for (int i = a; i < a + block_size; i++) {
-   //             for (int j = b; j < b + block_size; j++) {
-   //                for (int k = c; k < c + block_size; k++) {
-   //                   C[j * n + i] += A[k * n + i] * B[j * n + k];
-   //                }
-   //             }
-   //          }
-   //          LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
-   //       }
-   //    }
-   // }
 }
