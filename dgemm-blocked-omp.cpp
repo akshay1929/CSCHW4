@@ -32,20 +32,23 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    for (int x = 0; x < blocks; x++) {
       for (int y = 0; y < blocks; y++) {
          //Copy to cLoc
-         for (int cj = 0; cj < block_size; cj++) {
-            for (int ci = 0; ci < block_size; ci++) {
-               cLoc[block_size * cj + ci] = C[(block_size * y + cj) * n + block_size * x + ci];
-            }
-         }
+         cLoc = copy(cLoc, C, n, block_size, x, y);
+         // for (int cj = 0; cj < block_size; cj++) {
+         //    for (int ci = 0; ci < block_size; ci++) {
+         //       cLoc[block_size * cj + ci] = C[(block_size * y + cj) * n + block_size * x + ci];
+         //    }
+         // }
 
          for (int z = 0; z < blocks; z++) {
             //Copy to aLoc and bLoc
-            for (int cj = 0; cj < block_size; cj++) {
-               for (int ci = 0; ci < block_size; ci++) {
-                  aLoc[block_size * cj + ci] = A[(block_size * z + cj) * n + block_size * x + ci];
-                  bLoc[block_size * cj + ci] = B[(block_size * y + cj) * n + block_size * z + ci];
-               }
-            }
+            copytoNew(aLoc, A, n, block_size, x, z);
+            copytoNew(bLoc, B, n, block_size, y, z);
+            // for (int cj = 0; cj < block_size; cj++) {
+            //    for (int ci = 0; ci < block_size; ci++) {
+            //       aLoc[block_size * cj + ci] = A[(block_size * z + cj) * n + block_size * x + ci];
+            //       bLoc[block_size * cj + ci] = B[(block_size * y + cj) * n + block_size * z + ci];
+            //    }
+            // }
             //Multiplication
             for (int i = 0; i < n; i++) {
                for (int j = 0; j < n; j++) {
@@ -56,11 +59,26 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
             }
          }
          //Copy back to C
-         for (int cj = 0; cj < block_size; cj++) {
-            for (int ci = 0; ci < block_size; ci++) {
-               C[(block_size * y + ci) * n + block_size * x + ci] = cLoc[block_size * cj + ci];
-            }
-         }
+         copytoOld(C, cLoc, n, block_size, x, y);
+         // for (int cj = 0; cj < block_size; cj++) {
+         //    for (int ci = 0; ci < block_size; ci++) {
+         //       C[(block_size * y + ci) * n + block_size * x + ci] = cLoc[block_size * cj + ci];
+         //    }
+         // }
+      }
+   }
+}
+void copytoNew(double* newMatrix, double *old, int n, int block_size, int x, int y) {
+   for (int cj = 0; cj < block_size; cj++) {
+      for (int ci = 0; ci < block_size; ci++) {
+         newMatrix[block_size * cj + ci] = old[(block_size * y + cj) * n + block_size * x + ci];
+      }
+   }
+}
+void copytoOld(double* newMatrix, double *old, int n, int block_size, int x, int y) {
+   for (int cj = 0; cj < block_size; cj++) {
+      for (int ci = 0; ci < block_size; ci++) {
+         old[(block_size * y + ci) * n + block_size * x + ci] = newMatrix[block_size * cj + ci];
       }
    }
 }
