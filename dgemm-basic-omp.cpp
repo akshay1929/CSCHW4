@@ -20,11 +20,11 @@ void square_dgemm(int n, double* A, double* B, double* C)
    LIKWID_MARKER_START(MY_MARKER_REGION_NAME)
    for (int i = 0; i < n; i++) {
       #pragma omp for
-      for (int j = 0; j < n; j++) {
-         for (int k = 0; k < n; k++) {
-            C[j * n + i] += A[k * n + i] * B[j * n + k];
-         }
-      }
-   }
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                C[j * n + i] += A[k * n + i] * B[j * n + k];
+            }
+        }
+    }
    LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME)
 }
