@@ -19,11 +19,12 @@ void square_dgemm(int n, double* A, double* B, double* C)
    // after the matrix multiply code but before the end of the parallel code block.
    #pragma omp parallel {
       LIKWID_MARKER_START(MY_MARKER_REGION_NAME)
+      #pragma omp for
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
-               for (int k = 0; k < n; k++) {
-                  C[j * n + i] += A[k * n + i] * B[j * n + k];
-               }
+            for (int k = 0; k < n; k++) {
+               C[j * n + i] += A[k * n + i] * B[j * n + k];
+            }
          }
       }
       LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME)
