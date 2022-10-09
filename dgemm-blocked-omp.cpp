@@ -7,6 +7,21 @@
 const char* dgemm_desc = "Blocked dgemm, OpenMP-enabled";
 
 
+void copytoNew(double* newMatrix, double *old, int n, int block_size, int x, int y) {
+   for (int cj = 0; cj < block_size; cj++) {
+      for (int ci = 0; ci < block_size; ci++) {
+         newMatrix[block_size * cj + ci] = old[(block_size * y + cj) * n + block_size * x + ci];
+      }
+   }
+}
+void copytoOld(double* newMatrix, double *old, int n, int block_size, int x, int y) {
+   for (int cj = 0; cj < block_size; cj++) {
+      for (int ci = 0; ci < block_size; ci++) {
+         old[(block_size * y + ci) * n + block_size * x + ci] = newMatrix[block_size * cj + ci];
+      }
+   }
+}
+
 /* This routine performs a dgemm operation
  *  C := C + A * B
  * where A, B, and C are n-by-n matrices stored in column-major format.
@@ -32,7 +47,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    for (int x = 0; x < blocks; x++) {
       for (int y = 0; y < blocks; y++) {
          //Copy to cLoc
-         cLoc = copy(cLoc, C, n, block_size, x, y);
+         copytoNew(cLoc, C, n, block_size, x, y);
          // for (int cj = 0; cj < block_size; cj++) {
          //    for (int ci = 0; ci < block_size; ci++) {
          //       cLoc[block_size * cj + ci] = C[(block_size * y + cj) * n + block_size * x + ci];
@@ -65,20 +80,6 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
          //       C[(block_size * y + ci) * n + block_size * x + ci] = cLoc[block_size * cj + ci];
          //    }
          // }
-      }
-   }
-}
-void copytoNew(double* newMatrix, double *old, int n, int block_size, int x, int y) {
-   for (int cj = 0; cj < block_size; cj++) {
-      for (int ci = 0; ci < block_size; ci++) {
-         newMatrix[block_size * cj + ci] = old[(block_size * y + cj) * n + block_size * x + ci];
-      }
-   }
-}
-void copytoOld(double* newMatrix, double *old, int n, int block_size, int x, int y) {
-   for (int cj = 0; cj < block_size; cj++) {
-      for (int ci = 0; ci < block_size; ci++) {
-         old[(block_size * y + ci) * n + block_size * x + ci] = newMatrix[block_size * cj + ci];
       }
    }
 }
