@@ -40,7 +40,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    double *aLoc = new double[block_size*block_size];
    double *bLoc = new double[block_size*block_size];
    double *cLoc = new double[block_size*block_size];
-   
+   #pragma omp for
    for (int i = 0; i < blocks; i++) {
       for (int j = 0; j < blocks; j++) {
          //Makes copy of block from C
@@ -54,7 +54,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
             
             
 
-            #pragma omp for
+            
             for (int a = 0; a < block_size; a++) {
                for (int b = 0; b < block_size; b++) {
                   for (int c = 0; c < block_size; c++) {
