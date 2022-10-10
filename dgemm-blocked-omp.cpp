@@ -81,5 +81,9 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
             }
          }
       }
+
    }
+   delete[] aLoc;
+   delete[] bLoc;
+   delete[] cLoc;
 }
