@@ -60,15 +60,15 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
             // copytoNew(bLoc, B, n, block_size, y, z);
             for (int cj = 0; cj < block_size; cj++) {
                for (int ci = 0; ci < block_size; ci++) {
-                  aLoc[block_size * cj + ci] = A[(block_size * z + cj) * n + block_size * x + ci];
-                  bLoc[block_size * cj + ci] = B[(block_size * y + cj) * n + block_size * z + ci];
+                  aLoc[(block_size * cj) + ci] = A[((block_size * z) + cj) * n + (block_size * x) + ci];
+                  bLoc[(block_size * cj) + ci] = B[((block_size * y) + cj) * n + (block_size * z) + ci];
                }
             }
             //Multiplication
             for (int i = 0; i < block_size; i++) {
                for (int j = 0; j < block_size; j++) {
                   for (int k = 0; k < block_size; k++) {
-                     cLoc[i * block_size + k] += aLoc[j * block_size + k] * bLoc[i * block_size + j];
+                     cLoc[(i * block_size) + k] += aLoc[(j * block_size) + k] * bLoc[(i * block_size) + j];
                   }
                }
             }
@@ -77,11 +77,10 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
          //copytoOld(C, cLoc, n, block_size, x, y);
          for (int cj = 0; cj < block_size; cj++) {
             for (int ci = 0; ci < block_size; ci++) {
-               C[(block_size * y + ci) * n + block_size * x + ci] = cLoc[block_size * cj + ci];
+               C[((block_size * y) + ci) * n + (block_size * x) + ci] = cLoc[(block_size * cj) + ci];
             }
          }
       }
-
    }
    delete[] aLoc;
    delete[] bLoc;
