@@ -33,13 +33,14 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    // be sure to include LIKWID_MARKER_START(MY_MARKER_REGION_NAME) inside the block of parallel code,
    // but before your matrix multiply code, and then include LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME)
    // after the matrix multiply code but before the end of the parallel code block.
-
+   #pragma omp parallel
+   {
+      LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
    int blocks = n/block_size;
    double *aLoc = new double[block_size*block_size];
    double *bLoc = new double[block_size*block_size];
    double *cLoc = new double[block_size*block_size];
-   #pragma omp parallel
-   {
+   
    for (int i = 0; i < blocks; i++) {
       for (int j = 0; j < blocks; j++) {
          //Makes copy of block from C
@@ -51,7 +52,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
                //Makes copy of block from B
                copytoNew(bLoc, B, n, block_size, k, j);
             
-            LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
+            
 
             #pragma omp for
             for (int a = 0; a < block_size; a++) {
@@ -61,7 +62,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
                   }
                }
             }
-            LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
+            
          }
          //Makes copy of block to C
          copytoOld(C, cLoc, n, block_size, i, j);
@@ -71,5 +72,6 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    delete[] aLoc;
    delete[] bLoc;
    delete[] cLoc;
+   LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
    }
 }
